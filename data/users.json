@@ -1,0 +1,18 @@
+{
+  "admin": {
+    "username": "admin",
+    "full_name": "Administrator",
+    "salt": "f45717cd02b1afefef140876bab3c1ed",
+    "password_hash": "87f725c98b7ef50686dde2c11fad732283f5699c7ff9894bd862821b4f0feb6d",
+    "created_at": "2026-06-23T04:06:16",
+    "role": "admin"
+  },
+  "ahmed": {
+    "username": "AHMED",
+    "full_name": "AHMED",
+    "salt": "fd1c3b9f3d4dac8a3669dc0b27c591df",
+    "password_hash": "e34a4be8ae0b6ab9b5539f5d6ab84d01a17d60f3d41ab92d5e85445be305da35",
+    "created_at": "2026-06-23T04:08:43",
+    "role": "user"
+  }
+}
