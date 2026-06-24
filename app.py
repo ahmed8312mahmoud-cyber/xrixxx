@@ -23,61 +23,248 @@ import auth
 # إعدادات الصفحة
 # ======================================================================
 st.set_page_config(
-    page_title="Chest X-Ray Classifier",
+    page_title="xraix — Chest AI",
     page_icon="🫁",
     layout="wide",
 )
 
 # ======================================================================
-# CSS مخصص
+# CSS مخصص — تصميم xraix الاحترافي
 # ======================================================================
 st.markdown("""
 <style>
-    .main-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1f77b4;
-        text-align: center;
-        margin-bottom: 0.2rem;
+    /* ── الخطوط والألوان الأساسية ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
     }
-    .sub-title {
-        font-size: 1rem;
-        color: #555;
-        text-align: center;
-        margin-bottom: 2rem;
+
+    /* ── إخفاء عناصر Streamlit الافتراضية ── */
+    #MainMenu, footer, header { visibility: hidden; }
+    .block-container {
+        padding-top: 1.2rem !important;
+        padding-bottom: 1rem !important;
+        max-width: 1200px;
     }
-    .finding-positive {
-        background-color: #ffeaea;
-        border-left: 4px solid #e74c3c;
-        padding: 6px 12px;
-        border-radius: 4px;
-        margin: 4px 0;
+
+    /* ── Sidebar احترافي ── */
+    [data-testid="stSidebar"] {
+        background: #0B1C2E !important;
+        border-right: 1px solid rgba(255,255,255,0.06) !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: rgba(255,255,255,0.75) !important;
+    }
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+    }
+    [data-testid="stSidebar"] .stSlider label,
+    [data-testid="stSidebar"] .stTextInput label,
+    [data-testid="stSidebar"] .stCheckbox label {
+        color: rgba(255,255,255,0.6) !important;
+        font-size: 0.82rem !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: rgba(255,255,255,0.55) !important;
+        font-size: 0.82rem;
+    }
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255,255,255,0.08) !important;
+    }
+    [data-testid="stSidebar"] .stButton > button {
+        background: rgba(255,255,255,0.06) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: rgba(255,255,255,0.6) !important;
+        border-radius: 8px !important;
+        font-size: 0.82rem !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: rgba(255,255,255,0.12) !important;
+        color: #fff !important;
+    }
+
+    /* ── شعار xraix في الـ Sidebar ── */
+    .xraix-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 0 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        margin-bottom: 16px;
+    }
+    .xraix-brand-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #1e6fa8, #00c6a0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .xraix-brand-text .name {
+        font-size: 1.15rem;
         font-weight: 600;
-        color: #c0392b;
+        color: #ffffff !important;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+    }
+    .xraix-brand-text .tag {
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.35) !important;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    /* ── Header الرئيسي ── */
+    .xraix-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        border-radius: 12px;
+        margin-bottom: 1.2rem;
+    }
+    .xraix-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .xraix-header-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #1e6fa8, #00c6a0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+    .xraix-header-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #0B1C2E;
+    }
+    .xraix-header-sub {
+        font-size: 0.78rem;
+        color: #6b7280;
+        margin-top: 1px;
+    }
+    .xraix-badge {
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        color: #1D4ED8;
+        font-size: 0.72rem;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-weight: 500;
+    }
+
+    /* ── بطاقات Section ── */
+    .xraix-card {
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 1rem;
+    }
+    .xraix-card-title {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        border-bottom: 1px solid #f3f4f6;
+        padding-bottom: 10px;
+    }
+
+    /* ── Findings ── */
+    .finding-positive {
+        background: #FEF2F2;
+        border-left: 3px solid #EF4444;
+        padding: 7px 12px;
+        border-radius: 0 8px 8px 0;
+        margin: 4px 0;
+        font-weight: 500;
+        color: #991B1B;
+        font-size: 0.84rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
     .finding-negative {
-        background-color: #f0f0f0;
-        border-left: 4px solid #bbb;
-        padding: 6px 12px;
-        border-radius: 4px;
+        background: #F9FAFB;
+        border-left: 3px solid #D1D5DB;
+        padding: 7px 12px;
+        border-radius: 0 8px 8px 0;
         margin: 4px 0;
-        color: #666;
+        color: #6B7280;
+        font-size: 0.84rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
-    .metric-box {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-    }
+
+    /* ── Disclaimer ── */
     .disclaimer {
-        background-color: #fff3cd;
-        border: 1px solid #ffc107;
-        border-radius: 6px;
+        background: #FFFBEB;
+        border: 1px solid #FCD34D;
+        border-radius: 10px;
         padding: 10px 16px;
-        font-size: 0.85rem;
-        color: #856404;
-        margin-top: 1rem;
+        font-size: 0.8rem;
+        color: #92400E;
+        margin-top: 1.2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    /* ── Section Headers (بدل subheader الافتراضي) ── */
+    .section-header {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #1e3a5f;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        background: #F0F7FF;
+        border-radius: 8px;
+        border-left: 3px solid #1e6fa8;
+    }
+
+    /* ── Metric cards تحسين ── */
+    [data-testid="metric-container"] {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 10px !important;
+    }
+    [data-testid="metric-container"] label {
+        font-size: 0.75rem !important;
+        color: #64748B !important;
+        font-weight: 500 !important;
+    }
+    [data-testid="metric-container"] [data-testid="stMetricValue"] {
+        font-size: 1.5rem !important;
+        color: #0B1C2E !important;
+        font-weight: 600 !important;
+    }
+
+    /* ── Divider ── */
+    hr {
+        border-color: #F1F5F9 !important;
+    }
+
+    /* ── Spinner ── */
+    .stSpinner > div {
+        border-top-color: #1e6fa8 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -95,20 +282,38 @@ user = {
 }
 
 # ======================================================================
-# العنوان
+# العنوان الرئيسي — xraix Brand Header
 # ======================================================================
-st.markdown('<div class="main-title">🫁 Chest X-Ray Disease Classifier</div>', unsafe_allow_html=True)
-st.markdown(
-    '<div class="sub-title">NIH Chest X-Ray · DenseNet121 · 14-Class Multi-Label Detection</div>',
-    unsafe_allow_html=True,
-)
-st.divider()
+st.markdown("""
+<div class="xraix-header">
+    <div class="xraix-header-left">
+        <div class="xraix-header-icon">🫁</div>
+        <div>
+            <div class="xraix-header-title">xraix</div>
+            <div class="xraix-header-sub">Chest X-Ray AI &nbsp;·&nbsp; DenseNet121 &nbsp;·&nbsp; 14-Class Detection</div>
+        </div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <span class="xraix-badge">NIH Dataset</span>
+        <span class="xraix-badge">Multi-Label</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ======================================================================
 # Sidebar — إعدادات + معلومات المستخدم
 # ======================================================================
 with st.sidebar:
-    st.markdown(f"### 👋 أهلاً، {user['full_name']}")
+    st.markdown(f"""
+    <div class="xraix-brand">
+        <div class="xraix-brand-icon">🫁</div>
+        <div class="xraix-brand-text">
+            <div class="name">xraix</div>
+            <div class="tag">Chest AI Platform</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown(f"**👤 {user['full_name']}**")
     st.caption(f"الدور: `{user.get('role', 'user')}`")
     
     # تحويل الزر ليتوافق مع التحديث الجديد
@@ -173,7 +378,7 @@ col_upload, col_result = st.columns([1, 1], gap="large")
 
 # ---------- العمود الأيسر: رفع الصورة ----------
 with col_upload:
-    st.subheader("📤 رفع صورة الأشعة")
+    st.markdown('<div class="section-header">📤 رفع صورة الأشعة</div>', unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader(
         "اختر صورة Chest X-Ray",
@@ -192,7 +397,7 @@ with col_upload:
 
 # ---------- العمود الأيمن: النتائج ----------
 with col_result:
-    st.subheader("📊 نتائج التشخيص")
+    st.markdown('<div class="section-header">📊 نتائج التشخيص</div>', unsafe_allow_html=True)
 
     if uploaded_file is None:
         st.info("ارفع صورة أشعة على اليسار لبدء التحليل.")
@@ -264,7 +469,7 @@ if (
     and probabilities is not None
 ):
     st.divider()
-    st.subheader("🔥 Grad-CAM — أين نظر الموديل؟")
+    st.markdown('<div class="section-header">🔥 Grad-CAM — أين نظر الموديل؟</div>', unsafe_allow_html=True)
 
     cam_class = st.selectbox(
         "اختر المرض لعرض الـ Heatmap الخاص به",
@@ -307,7 +512,7 @@ if (
 # ======================================================================
 st.markdown("""
 <div class="disclaimer">
-⚠️ <strong>تنبيه طبي:</strong> هذا النظام مخصص للأغراض البحثية والتعليمية فقط.
-لا يُستخدم كبديل عن التشخيص الطبي المتخصص. استشر طبيبك دائماً.
+    ⚠️ <div><strong>تنبيه طبي:</strong> هذا النظام مخصص للأغراض البحثية والتعليمية فقط.
+    لا يُستخدم كبديل عن التشخيص الطبي المتخصص. استشر طبيبك دائماً.</div>
 </div>
 """, unsafe_allow_html=True)
